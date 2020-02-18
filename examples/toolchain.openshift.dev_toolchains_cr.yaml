@@ -1,0 +1,21 @@
+apiVersion: toolchain.openshift.dev/v1alpha1
+kind: Toolchain
+metadata:
+  name: toolchain-toolchain
+  namespace: default
+spec:
+  codereadyWorkspaces:
+    install: false
+    tls: false
+  openshiftPipelines:
+    install: false
+status:
+  conditions:
+  - lastTransitionTime: "2019-12-16T09:37:11Z"
+    reason: Installed
+    status: "True"
+    type: CRWReady
+  - lastTransitionTime: "2019-12-16T09:37:11Z"
+    reason: Installed
+    status: "True"
+    type: PipelineReady

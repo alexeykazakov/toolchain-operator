@@ -14,6 +14,9 @@ type CheInstallationSpec struct {
 
 type CheOperator struct {
 	// The namespace where the CodeReady Workspaces operator will be installed
+	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors=true
+	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors.displayName="Install CodeReady Workspaces Namespace"
+	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors.x-descriptors="urn:alm:descriptor:com.tectonic.ui:label"
 	Namespace string `json:"namespace"`
 }
 
@@ -43,6 +46,7 @@ type CheInstallationStatus struct {
 // +kubebuilder:printcolumn:name="Ready",type="string",JSONPath=".status.conditions[?(@.type==\"CheReady\")].status"
 // +kubebuilder:printcolumn:name="Reason",type="string",JSONPath=".status.conditions[?(@.type==\"CheReady\")].reason"
 // +kubebuilder:printcolumn:name="Message",type="string",JSONPath=".status.conditions[?(@.type==\"CheReady\")].message",priority=1
+// +operator-sdk:gen-csv:customresourcedefinitions.displayName="CheInstallation"
 type CheInstallation struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`

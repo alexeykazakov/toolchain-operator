@@ -60,6 +60,7 @@ rules:
   resources:
   - cheinstallations/finalizers
   - tektoninstallations/finalizers
+  - toolchains/finalizers
   verbs:
   - update
 - apiGroups:
@@ -67,8 +68,10 @@ rules:
   resources:
   - cheinstallations
   - tektoninstallations
+  - toolchains
   - cheinstallations/status
   - tektoninstallations/status
+  - toolchains/status
   verbs:
   - '*'
 - apiGroups:

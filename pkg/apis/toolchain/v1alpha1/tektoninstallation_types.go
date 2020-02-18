@@ -35,6 +35,7 @@ type TektonInstallationStatus struct {
 // +kubebuilder:resource:path=tektoninstallations,scope=Cluster
 // +kubebuilder:printcolumn:name="Ready",type="string",JSONPath=".status.conditions[?(@.type==\"TektonReady\")].status"
 // +kubebuilder:printcolumn:name="Reason",type="string",JSONPath=".status.conditions[?(@.type==\"TektonReady\")].reason"
+// +operator-sdk:gen-csv:customresourcedefinitions.displayName="TektonInstallation"
 type TektonInstallation struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`

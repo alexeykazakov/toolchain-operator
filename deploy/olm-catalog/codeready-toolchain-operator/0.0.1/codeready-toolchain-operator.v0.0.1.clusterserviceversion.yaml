@@ -43,6 +43,39 @@ metadata:
               }
             ]
           }
+        },
+        {
+          "apiVersion": "toolchain.openshift.dev/v1alpha1",
+          "kind": "Toolchain",
+          "metadata": {
+            "name": "toolchain-toolchain",
+            "namespace": "default"
+          },
+          "spec": {
+            "codereadyWorkspaces": {
+              "install": false,
+              "tls": false
+            },
+            "openshiftPipelines": {
+              "install": false
+            }
+          },
+          "status": {
+            "conditions": [
+              {
+                "lastTransitionTime": "2019-12-16T09:37:11Z",
+                "reason": "Installed",
+                "status": "True",
+                "type": "CRWReady"
+              },
+              {
+                "lastTransitionTime": "2019-12-16T09:37:11Z",
+                "reason": "Installed",
+                "status": "True",
+                "type": "PipelineReady"
+              }
+            ]
+          }
         }
       ]
     capabilities: Basic Install
@@ -63,36 +96,52 @@ spec:
   apiservicedefinitions: {}
   customresourcedefinitions:
     owned:
-    - description: CheInstallation defines how CodeReady Workspaces (Che) operator
-        should be installed
-      displayName: CodeReady Workspaces Installation
+    - description: CheInstallation is the Schema for the cheinstallations API
+      displayName: CheInstallation
       kind: CheInstallation
       name: cheinstallations.toolchain.openshift.dev
       specDescriptors:
       - description: The namespace where the CodeReady Workspaces operator will be
           installed
-        displayName: Namespace
-        path: namespace
+        displayName: Install CodeReady Workspaces Namespace
+        path: cheOperatorSpec.namespace
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:label
-      statusDescriptors:
-      - description: Last known condition of the CodeReady Workspaces  operator installation
-        displayName: Conditions
-        path: conditions
-        x-descriptors:
-        - urn:alm:descriptor:io.kubernetes.conditions
       version: v1alpha1
-    - description: TektonInstallation defines how OpenShift Pipelines (Tekton) operator
-        should be installed
-      displayName: OpenShift Pipelines Installation
+    - description: TektonInstallation is the Schema for the tektoninstallations API
+      displayName: TektonInstallation
       kind: TektonInstallation
       name: tektoninstallations.toolchain.openshift.dev
-      statusDescriptors:
-      - description: Last known condition of the tekton operator installation
-        displayName: Conditions
-        path: conditions
+      version: v1alpha1
+    - description: Toolchain is the Schema for the toolchains API
+      displayName: Toolchain
+      kind: Toolchain
+      name: toolchains.toolchain.openshift.dev
+      specDescriptors:
+      - description: Specify if CodeReady Workspaces should be installed
+        displayName: Install CodeReady Workspaces
+        path: codereadyWorkspaces.install
         x-descriptors:
-        - urn:alm:descriptor:io.kubernetes.conditions
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:CodeReadyWorkspaces
+      - description: TLS
+        displayName: TLS
+        path: codereadyWorkspaces.tls
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:CodeReadyWorkspaces
+      - description: Specify if OpenShift Pipelines should be installed
+        displayName: Install OpenShift Pipelines
+        path: openshiftPipelines.install
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      statusDescriptors:
+      - description: CodeReady Workspaces Dashboard URL
+        displayName: CodeReady Workspaces Dashboard
+        path: cheDashboardURL
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:CodeReadyWorkspaces
+        - urn:alm:descriptor:org.w3:link
       version: v1alpha1
   description: |
     # CodeReady Toolchain
@@ -182,6 +231,7 @@ spec:
           resources:
           - cheinstallations/finalizers
           - tektoninstallations/finalizers
+          - toolchains/finalizers
           verbs:
           - update
         - apiGroups:
@@ -189,8 +239,10 @@ spec:
           resources:
           - cheinstallations
           - tektoninstallations
+          - toolchains
           - cheinstallations/status
           - tektoninstallations/status
+          - toolchains/status
           verbs:
           - '*'
         - apiGroups:

@@ -194,6 +194,111 @@ data:
           plural: ""
         conditions: []
         storedVersions: []
+    - apiVersion: apiextensions.k8s.io/v1beta1
+      kind: CustomResourceDefinition
+      metadata:
+        creationTimestamp: null
+        name: toolchains.toolchain.openshift.dev
+      spec:
+        additionalPrinterColumns:
+        - JSONPath: .status.conditions[?(@.type=="Ready")].status
+          name: Ready
+          type: string
+        - JSONPath: .status.conditions[?(@.type=="Ready")].reason
+          name: Reason
+          type: string
+        group: toolchain.openshift.dev
+        names:
+          kind: Toolchain
+          listKind: ToolchainList
+          plural: toolchains
+          singular: toolchain
+        scope: Namespaced
+        subresources:
+          status: {}
+        validation:
+          openAPIV3Schema:
+            description: Toolchain is the Schema for the toolchains API
+            properties:
+              apiVersion:
+                description: 'APIVersion defines the versioned schema of this representation
+                  of an object. Servers should convert recognized schemas to the latest
+                  internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+                type: string
+              kind:
+                description: 'Kind is a string value representing the REST resource this
+                  object represents. Servers may infer this from the endpoint the client
+                  submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+                type: string
+              metadata:
+                type: object
+              spec:
+                properties:
+                  codereadyWorkspaces:
+                    properties:
+                      install:
+                        description: Specify if CodeReady Workspaces should be installed
+                        type: boolean
+                      namespace:
+                        description: CodeReady Workspaces namespace
+                        type: string
+                      tls:
+                        description: TLS
+                        type: boolean
+                    type: object
+                  openshiftPipelines:
+                    properties:
+                      install:
+                        description: Specify if OpenShift Pipelines should be installed
+                        type: boolean
+                    type: object
+                type: object
+              status:
+                properties:
+                  cheDashboardURL:
+                    description: CodeReady Workspaces Dashboard URL
+                    type: string
+                  conditions:
+                    description: 'Conditions is an array of current Toolchain conditions
+                      Supported condition types: Ready'
+                    items:
+                      properties:
+                        lastTransitionTime:
+                          description: Last time the condition transit from one status to
+                            another.
+                          format: date-time
+                          type: string
+                        message:
+                          description: Human readable message indicating details about last
+                            transition.
+                          type: string
+                        reason:
+                          description: (brief) reason for the condition's last transition.
+                          type: string
+                        status:
+                          description: Status of the condition, one of True, False, Unknown.
+                          type: string
+                        type:
+                          description: Type of condition
+                          type: string
+                      required:
+                      - status
+                      - type
+                      type: object
+                    type: array
+                type: object
+            type: object
+        version: v1alpha1
+        versions:
+        - name: v1alpha1
+          served: true
+          storage: true
+      status:
+        acceptedNames:
+          kind: ""
+          plural: ""
+        conditions: []
+        storedVersions: []
   clusterServiceVersions: |-
     - apiVersion: operators.coreos.com/v1alpha1
       kind: ClusterServiceVersion
@@ -240,6 +345,39 @@ data:
                     }
                   ]
                 }
+              },
+              {
+                "apiVersion": "toolchain.openshift.dev/v1alpha1",
+                "kind": "Toolchain",
+                "metadata": {
+                  "name": "toolchain-toolchain",
+                  "namespace": "default"
+                },
+                "spec": {
+                  "codereadyWorkspaces": {
+                    "install": false,
+                    "tls": false
+                  },
+                  "openshiftPipelines": {
+                    "install": false
+                  }
+                },
+                "status": {
+                  "conditions": [
+                    {
+                      "lastTransitionTime": "2019-12-16T09:37:11Z",
+                      "reason": "Installed",
+                      "status": "True",
+                      "type": "CRWReady"
+                    },
+                    {
+                      "lastTransitionTime": "2019-12-16T09:37:11Z",
+                      "reason": "Installed",
+                      "status": "True",
+                      "type": "PipelineReady"
+                    }
+                  ]
+                }
               }
             ]
           capabilities: Basic Install
@@ -260,36 +398,52 @@ data:
         apiservicedefinitions: {}
         customresourcedefinitions:
           owned:
-          - description: CheInstallation defines how CodeReady Workspaces (Che) operator
-              should be installed
-            displayName: CodeReady Workspaces Installation
+          - description: CheInstallation is the Schema for the cheinstallations API
+            displayName: CheInstallation
             kind: CheInstallation
             name: cheinstallations.toolchain.openshift.dev
             specDescriptors:
             - description: The namespace where the CodeReady Workspaces operator will be
                 installed
-              displayName: Namespace
-              path: namespace
+              displayName: Install CodeReady Workspaces Namespace
+              path: cheOperatorSpec.namespace
               x-descriptors:
               - urn:alm:descriptor:com.tectonic.ui:label
-            statusDescriptors:
-            - description: Last known condition of the CodeReady Workspaces  operator installation
-              displayName: Conditions
-              path: conditions
-              x-descriptors:
-              - urn:alm:descriptor:io.kubernetes.conditions
             version: v1alpha1
-          - description: TektonInstallation defines how OpenShift Pipelines (Tekton) operator
-              should be installed
-            displayName: OpenShift Pipelines Installation
+          - description: TektonInstallation is the Schema for the tektoninstallations API
+            displayName: TektonInstallation
             kind: TektonInstallation
             name: tektoninstallations.toolchain.openshift.dev
-            statusDescriptors:
-            - description: Last known condition of the tekton operator installation
-              displayName: Conditions
-              path: conditions
+            version: v1alpha1
+          - description: Toolchain is the Schema for the toolchains API
+            displayName: Toolchain
+            kind: Toolchain
+            name: toolchains.toolchain.openshift.dev
+            specDescriptors:
+            - description: Specify if CodeReady Workspaces should be installed
+              displayName: Install CodeReady Workspaces
+              path: codereadyWorkspaces.install
               x-descriptors:
-              - urn:alm:descriptor:io.kubernetes.conditions
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:CodeReadyWorkspaces
+            - description: TLS
+              displayName: TLS
+              path: codereadyWorkspaces.tls
+              x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:CodeReadyWorkspaces
+            - description: Specify if OpenShift Pipelines should be installed
+              displayName: Install OpenShift Pipelines
+              path: openshiftPipelines.install
+              x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+            statusDescriptors:
+            - description: CodeReady Workspaces Dashboard URL
+              displayName: CodeReady Workspaces Dashboard
+              path: cheDashboardURL
+              x-descriptors:
+              - urn:alm:descriptor:com.tectonic.ui:fieldGroup:CodeReadyWorkspaces
+              - urn:alm:descriptor:org.w3:link
             version: v1alpha1
         description: |
           # CodeReady Toolchain
@@ -379,6 +533,7 @@ data:
                 resources:
                 - cheinstallations/finalizers
                 - tektoninstallations/finalizers
+                - toolchains/finalizers
                 verbs:
                 - update
               - apiGroups:
@@ -386,8 +541,10 @@ data:
                 resources:
                 - cheinstallations
                 - tektoninstallations
+                - toolchains
                 - cheinstallations/status
                 - tektoninstallations/status
+                - toolchains/status
                 verbs:
                 - '*'
               - apiGroups:

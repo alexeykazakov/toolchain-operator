@@ -9,6 +9,7 @@ const (
 
 	CheReady    toolchainv1alpha1.ConditionType = "CheReady"
 	TektonReady toolchainv1alpha1.ConditionType = "TektonReady"
+	Ready       toolchainv1alpha1.ConditionType = "Ready"
 
 	// Status condition reasons
 
