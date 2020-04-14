@@ -6,24 +6,6 @@ metadata:
       [
         {
           "apiVersion": "toolchain.openshift.dev/v1alpha1",
-          "kind": "TektonInstallation",
-          "metadata": {
-            "name": "tekton-installation"
-          },
-          "spec": {},
-          "status": {
-            "conditions": [
-              {
-                "lastTransitionTime": "2019-12-16T09:20:19Z",
-                "reason": "Installed",
-                "status": "True",
-                "type": "TektonReady"
-              }
-            ]
-          }
-        },
-        {
-          "apiVersion": "toolchain.openshift.dev/v1alpha1",
           "kind": "CheInstallation",
           "metadata": {
             "name": "toolchain-cheinstallation"
@@ -42,6 +24,42 @@ metadata:
                 "type": "CheReady"
               }
             ]
+          }
+        },
+        {
+          "apiVersion": "toolchain.openshift.dev/v1alpha1",
+          "kind": "TektonInstallation",
+          "metadata": {
+            "name": "tekton-installation"
+          },
+          "spec": {},
+          "status": {
+            "conditions": [
+              {
+                "lastTransitionTime": "2019-12-16T09:20:19Z",
+                "reason": "Installed",
+                "status": "True",
+                "type": "TektonReady"
+              }
+            ]
+          }
+        },
+        {
+          "apiVersion": "toolchain.openshift.dev/v1alpha1",
+          "kind": "Toolchain",
+          "metadata": {
+            "name": "toolchain-cheinstallation",
+            "namespace": "default"
+          },
+          "spec": {
+            "crw": {
+              "install": true,
+              "namespace": "toolchain-crw",
+              "tls": false
+            },
+            "pipelines": {
+              "install": true
+            }
           }
         }
       ]
@@ -100,6 +118,36 @@ spec:
         path: conditions
         x-descriptors:
         - urn:alm:descriptor:io.kubernetes.conditions
+      version: v1alpha1
+    - description: Toolchain defines components to be installed
+      displayName: Toolchain
+      kind: Toolchain
+      name: toolchains.toolchain.openshift.dev
+      specDescriptors:
+      - description: Specify if CodeReady Workspaces should be installed
+        displayName: Install CodeReady Workspaces
+        path: codereadyWorkspaces.install
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:CodeReadyWorkspaces
+      - description: TLS
+        displayName: TLS
+        path: codereadyWorkspaces.tls
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:CodeReadyWorkspaces
+      - description: Specify if OpenShift Pipelines should be installed
+        displayName: Install OpenShift Pipelines
+        path: openshiftPipelines.install
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      statusDescriptors:
+      - description: CodeReady Workspaces Dashboard URL
+        displayName: CodeReady Workspaces Dashboard
+        path: cheDashboardURL
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:CodeReadyWorkspaces
+        - urn:alm:descriptor:org.w3:link
       version: v1alpha1
   description: |
     # CodeReady Toolchain

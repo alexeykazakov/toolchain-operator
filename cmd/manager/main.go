@@ -8,7 +8,6 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/codeready-toolchain/toolchain-operator/pkg"
 	"github.com/codeready-toolchain/toolchain-operator/pkg/apis"
 	"github.com/codeready-toolchain/toolchain-operator/pkg/controller"
 
@@ -153,10 +152,10 @@ func main() {
 			os.Exit(1)
 		}
 
-		if err := pkg.CreateInstallationResources(mgr.GetClient(), mgr.GetScheme(), log); err != nil {
-			log.Error(err, "unable to create toolchain installation resources during startup")
-			os.Exit(1)
-		}
+		//if err := pkg.CreateInstallationResources(mgr.GetClient(), mgr.GetScheme(), log); err != nil {
+		//	log.Error(err, "unable to create toolchain installation resources during startup")
+		//	os.Exit(1)
+		//}
 	}()
 
 	log.Info("Starting the Cmd.")

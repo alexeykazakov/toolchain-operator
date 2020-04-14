@@ -33,6 +33,9 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/codeready-toolchain/toolchain-operator/pkg/apis/toolchain/v1alpha1.TektonInstallation":       schema_pkg_apis_toolchain_v1alpha1_TektonInstallation(ref),
 		"github.com/codeready-toolchain/toolchain-operator/pkg/apis/toolchain/v1alpha1.TektonInstallationSpec":   schema_pkg_apis_toolchain_v1alpha1_TektonInstallationSpec(ref),
 		"github.com/codeready-toolchain/toolchain-operator/pkg/apis/toolchain/v1alpha1.TektonInstallationStatus": schema_pkg_apis_toolchain_v1alpha1_TektonInstallationStatus(ref),
+		"github.com/codeready-toolchain/toolchain-operator/pkg/apis/toolchain/v1alpha1.Toolchain":                schema_pkg_apis_toolchain_v1alpha1_Toolchain(ref),
+		"github.com/codeready-toolchain/toolchain-operator/pkg/apis/toolchain/v1alpha1.ToolchainSpec":            schema_pkg_apis_toolchain_v1alpha1_ToolchainSpec(ref),
+		"github.com/codeready-toolchain/toolchain-operator/pkg/apis/toolchain/v1alpha1.ToolchainStatus":          schema_pkg_apis_toolchain_v1alpha1_ToolchainStatus(ref),
 	}
 }
 
@@ -224,6 +227,115 @@ func schema_pkg_apis_toolchain_v1alpha1_TektonInstallationStatus(ref common.Refe
 									},
 								},
 							},
+						},
+					},
+				},
+			},
+		},
+		Dependencies: []string{
+			"github.com/codeready-toolchain/api/pkg/apis/toolchain/v1alpha1.Condition"},
+	}
+}
+
+func schema_pkg_apis_toolchain_v1alpha1_Toolchain(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "Toolchain defines components to be installed",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"kind": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"apiVersion": {
+						SchemaProps: spec.SchemaProps{
+							Description: "APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"metadata": {
+						SchemaProps: spec.SchemaProps{
+							Ref: ref("k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"),
+						},
+					},
+					"spec": {
+						SchemaProps: spec.SchemaProps{
+							Ref: ref("github.com/codeready-toolchain/toolchain-operator/pkg/apis/toolchain/v1alpha1.ToolchainSpec"),
+						},
+					},
+					"status": {
+						SchemaProps: spec.SchemaProps{
+							Ref: ref("github.com/codeready-toolchain/toolchain-operator/pkg/apis/toolchain/v1alpha1.ToolchainStatus"),
+						},
+					},
+				},
+			},
+		},
+		Dependencies: []string{
+			"github.com/codeready-toolchain/toolchain-operator/pkg/apis/toolchain/v1alpha1.ToolchainSpec", "github.com/codeready-toolchain/toolchain-operator/pkg/apis/toolchain/v1alpha1.ToolchainStatus", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
+	}
+}
+
+func schema_pkg_apis_toolchain_v1alpha1_ToolchainSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"openshiftPipelines": {
+						SchemaProps: spec.SchemaProps{
+							Ref: ref("github.com/codeready-toolchain/toolchain-operator/pkg/apis/toolchain/v1alpha1.OpenShiftPipelines"),
+						},
+					},
+					"codereadyWorkspaces": {
+						SchemaProps: spec.SchemaProps{
+							Ref: ref("github.com/codeready-toolchain/toolchain-operator/pkg/apis/toolchain/v1alpha1.CodeReadyWorkspaces"),
+						},
+					},
+				},
+			},
+		},
+		Dependencies: []string{
+			"github.com/codeready-toolchain/toolchain-operator/pkg/apis/toolchain/v1alpha1.CodeReadyWorkspaces", "github.com/codeready-toolchain/toolchain-operator/pkg/apis/toolchain/v1alpha1.OpenShiftPipelines"},
+	}
+}
+
+func schema_pkg_apis_toolchain_v1alpha1_ToolchainStatus(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"conditions": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-type":       "",
+								"x-kubernetes-patch-merge-key": "type",
+								"x-kubernetes-patch-strategy":  "merge",
+							},
+						},
+						SchemaProps: spec.SchemaProps{
+							Description: "Conditions is an array of current Toolchain conditions Supported condition types: Ready",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Ref: ref("github.com/codeready-toolchain/api/pkg/apis/toolchain/v1alpha1.Condition"),
+									},
+								},
+							},
+						},
+					},
+					"cheDashboardURL": {
+						SchemaProps: spec.SchemaProps{
+							Description: "CodeReady Workspaces Dashboard URL",
+							Type:        []string{"string"},
+							Format:      "",
 						},
 					},
 				},

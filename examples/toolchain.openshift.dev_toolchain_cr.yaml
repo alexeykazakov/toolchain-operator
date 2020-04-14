@@ -1,0 +1,12 @@
+apiVersion: toolchain.openshift.dev/v1alpha1
+kind: Toolchain
+metadata:
+  name: toolchain
+  namespace: default
+spec:
+  pipelines:
+    install: true
+  crw:
+    install: true
+    namespace: toolchain-crw
+    tls: false
